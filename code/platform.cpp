@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <SDL.h>
-
-#include "platform.h"
-// #include "game.h"
+#include "types.h"
+#include "game.cpp"
 
 int window_width = 1440;
 int window_height = 900;
@@ -12,9 +11,7 @@ int main(int argc, char const *argv[])
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS);
 
     SDL_Window *window;
-    SDL_Renderer *renderer;
     SDL_Surface *surface;
-    SDL_Texture *texture;
     SDL_Event event;
 
     window = SDL_CreateWindow(
@@ -28,22 +25,12 @@ int main(int argc, char const *argv[])
         return 1;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (!renderer) {
-        printf("Could not create renderer: %s\n", SDL_GetError());
-        return 1;
-    }
-
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    surface = SDL_GetWindowSurface(window);
 
     bool running = true;
 
-    u8 color_offset = 0;
-
     while (running)
     {
-        /////////////// Collect input ///////////
-
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -84,27 +71,22 @@ int main(int argc, char const *argv[])
             }
         }
 
-        //////////////// Simulate ///////////////
+        if (SDL_MUSTLOCK(surface))
+        {
+            SDL_LockSurface(surface);
+        }
+        // TODO: we're just using the default pixel color format, better to
+        // use what's best for us in the game layer and explicitly convert from
+        // that here.
+        game_update_and_render((u32*)surface->pixels, window_width, window_height);
+        if (SDL_MUSTLOCK(surface))
+        {
+            SDL_UnlockSurface(surface);
+        }
+        SDL_UpdateWindowSurface(window);
 
-        //////////////// Render /////////////////
-
-        // Clear to something
-        SDL_SetRenderDrawColor(
-            renderer,
-            0 + color_offset,
-            64 + color_offset,
-            128 + color_offset,
-            255
-        );
-        SDL_RenderClear(renderer);
-
-        // Blit
-        SDL_RenderPresent(renderer);
-
-        color_offset++;
     }
 
-    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
     SDL_Quit();
