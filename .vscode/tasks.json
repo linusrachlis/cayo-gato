@@ -1,0 +1,14 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "dev build",
+            "type": "shell",
+            "command": "gcc -g code/platform.cpp -o build/cayo-gato `sdl2-config --libs --cflags`",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
