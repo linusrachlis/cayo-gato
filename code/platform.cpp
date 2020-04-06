@@ -27,8 +27,17 @@ int main(int argc, char const *argv[])
 
     surface = SDL_GetWindowSurface(window);
 
-    bool running = true;
+    GameState* game_state = game_init_state();
 
+    GameDisplay game_display = {};
+    // TODO: we're just using the default pixel color format, better to
+    // use what's best for us in the game layer and explicitly convert from
+    // that here.
+    game_display.pixels = (u32*)surface->pixels;
+    game_display.width = window_width;
+    game_display.height = window_height;
+
+    bool running = true;
     while (running)
     {
         while (SDL_PollEvent(&event))
@@ -75,10 +84,11 @@ int main(int argc, char const *argv[])
         {
             SDL_LockSurface(surface);
         }
-        // TODO: we're just using the default pixel color format, better to
-        // use what's best for us in the game layer and explicitly convert from
-        // that here.
-        game_update_and_render((u32*)surface->pixels, window_width, window_height);
+
+        GameInput game_input = {};
+
+        game_update_and_render(game_state, game_input, game_display);
+
         if (SDL_MUSTLOCK(surface))
         {
             SDL_UnlockSurface(surface);
@@ -90,8 +100,6 @@ int main(int argc, char const *argv[])
     SDL_DestroyWindow(window);
 
     SDL_Quit();
-
-    printf("Goodbye world\n");
 
     return 0;
 }
