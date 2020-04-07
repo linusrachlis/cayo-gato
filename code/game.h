@@ -13,6 +13,14 @@ struct GameInput
 
 struct GameState
 {
-    u8 color_offset;
-    int movement_offset;
+    struct {
+        int x, y;
+    } cat_pos;
+};
+
+struct GameColor
+{
+    u8 r;
+    u8 g;
+    u8 b;
 };

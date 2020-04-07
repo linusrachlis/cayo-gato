@@ -1,11 +1,25 @@
+#include <stdlib.h>
+
 #include "game.h"
+
+#define PIXELS_PER_TILE 20;
+
+GameColor tile_color = {0xFF, 0x88, 0};
+GameColor cat_color = {0, 0, 0};
+GameColor bg_color = {0, 0, 0};
 
 GameState *game_init_state()
 {
     GameState *state = (GameState *)malloc(sizeof(GameState));
-    state->color_offset = 0;
-    state->movement_offset = 0;
+    state->cat_pos.x = 0;
+    state->cat_pos.y = 0;
     return state;
+}
+
+u32 game_render_color(GameColor color)
+{
+    u32 result = (color.r << 16) | (color.g << 8) | color.b;
+    return result;
 }
 
 void game_update_and_render(
@@ -14,29 +28,69 @@ void game_update_and_render(
     GameDisplay display)
 {
     // SECTION: Process input
-    if (input.down || input.right)
+    if (input.down)
     {
-        state->movement_offset++;
+        state->cat_pos.y++;
     }
-    if (input.left || input.up)
+    if (input.up)
     {
-        state->movement_offset--;
+        state->cat_pos.y--;
+    }
+    if (input.right)
+    {
+        state->cat_pos.x++;
+    }
+    if (input.left)
+    {
+        state->cat_pos.x--;
     }
 
     // SECTION: Simulate
-    int num_pixels = display.width * display.height;
-    u8 base_red = state->color_offset;
-    u8 base_green = 64 + state->color_offset;
-    u8 base_blue = 128 + state->color_offset;
+    // ...
 
     // SECTION: Render
-    for (int pixel_index = 0; pixel_index < num_pixels; pixel_index++)
+    for (
+        int pixel_row = 0;
+        pixel_row < display.height;
+        pixel_row++)
     {
-        u8 red = base_red + pixel_index + state->movement_offset;
-        u8 green = base_green + pixel_index + state->movement_offset;
-        u8 blue = base_blue + pixel_index + state->movement_offset;
-        u32 pixel_value = (red << 16) | (green << 8) | blue;
-        display.pixels[pixel_index] = pixel_value;
+        int tile_y = pixel_row / PIXELS_PER_TILE;
+
+        for (
+            int pixel_column = 0;
+            pixel_column < display.width;
+            pixel_column++)
+        {
+            u32 *pixel = display.pixels + pixel_row * pixel_column;
+
+            int tile_x = pixel_column / PIXELS_PER_TILE;
+
+            int column_pixel_in_tile = pixel_column % PIXELS_PER_TILE;
+            int row_pixel_in_tile = pixel_row % PIXELS_PER_TILE;
+
+            bool tile_pixel = (column_pixel_in_tile > 0) ||
+                              (row_pixel_in_tile > 0);
+
+            bool cat_tile = (tile_y == state->cat_pos.y) &&
+                            (tile_x == state->cat_pos.x);
+
+            bool cat_pixel = (8 <= column_pixel_in_tile) &&
+                             (column_pixel_in_tile < 12) &&
+                             (8 <= row_pixel_in_tile) &&
+                             (row_pixel_in_tile < 12);
+
+            if (cat_tile && cat_pixel)
+            {
+                *pixel = game_render_color(cat_color);
+            }
+            else if (tile_pixel)
+            {
+                *pixel = game_render_color(tile_color);
+            }
+            else
+            {
+                *pixel = game_render_color(bg_color);
+            }
+        }
     }
-    // state->color_offset++;
 }
