@@ -14,4 +14,5 @@ struct GameInput
 struct GameState
 {
     u8 color_offset;
+    int movement_offset;
 };

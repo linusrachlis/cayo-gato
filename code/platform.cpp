@@ -18,65 +18,79 @@ int main(int argc, char const *argv[])
         "Cayo Gato",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         window_width, window_height,
-        0
-    );
-    if (!window) {
+        0);
+    if (!window)
+    {
         printf("Couldn't create window: %s\n", SDL_GetError());
         return 1;
     }
 
     surface = SDL_GetWindowSurface(window);
 
-    GameState* game_state = game_init_state();
+    GameState *game_state = game_init_state();
 
     GameDisplay game_display = {};
     // TODO: we're just using the default pixel color format, better to
     // use what's best for us in the game layer and explicitly convert from
     // that here.
-    game_display.pixels = (u32*)surface->pixels;
+    game_display.pixels = (u32 *)surface->pixels;
     game_display.width = window_width;
     game_display.height = window_height;
 
+    GameInput game_input = {};
     bool running = true;
     while (running)
     {
+
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
             {
-                case SDL_KEYDOWN:
-                    if (!event.key.repeat)
+            case SDL_KEYDOWN:
+                if (!event.key.repeat)
+                {
+                    if (event.key.keysym.sym == SDLK_DOWN)
                     {
-                        if (event.key.keysym.sym == SDLK_RETURN)
-                        {
-                            // add_vector_this_frame = 1;
-                        }
-                        else if (event.key.keysym.sym == SDLK_x)
-                        {
-                            // is_dragging_x_basis = 1;
-                        }
-                        else if (event.key.keysym.sym == SDLK_y)
-                        {
-                            // is_dragging_y_basis = 1;
-                        }
+                        game_input.down = true;
                     }
-                    break;
-                case SDL_KEYUP:
-                    if (!event.key.repeat)
+                    else if (event.key.keysym.sym == SDLK_UP)
                     {
-                        if (event.key.keysym.sym == SDLK_x)
-                        {
-                            // is_dragging_x_basis = 0;
-                        }
-                        else if (event.key.keysym.sym == SDLK_y)
-                        {
-                            // is_dragging_y_basis = 0;
-                        }
+                        game_input.up = true;
                     }
-                    break;
-                case SDL_QUIT:
-                    running = 0;
-                    break;
+                    else if (event.key.keysym.sym == SDLK_LEFT)
+                    {
+                        game_input.left = true;
+                    }
+                    else if (event.key.keysym.sym == SDLK_RIGHT)
+                    {
+                        game_input.right = true;
+                    }
+                }
+                break;
+            case SDL_KEYUP:
+                if (!event.key.repeat)
+                {
+                    if (event.key.keysym.sym == SDLK_DOWN)
+                    {
+                        game_input.down = false;
+                    }
+                    else if (event.key.keysym.sym == SDLK_UP)
+                    {
+                        game_input.up = false;
+                    }
+                    else if (event.key.keysym.sym == SDLK_LEFT)
+                    {
+                        game_input.left = false;
+                    }
+                    else if (event.key.keysym.sym == SDLK_RIGHT)
+                    {
+                        game_input.right = false;
+                    }
+                }
+                break;
+            case SDL_QUIT:
+                running = 0;
+                break;
             }
         }
 
@@ -85,8 +99,6 @@ int main(int argc, char const *argv[])
             SDL_LockSurface(surface);
         }
 
-        GameInput game_input = {};
-
         game_update_and_render(game_state, game_input, game_display);
 
         if (SDL_MUSTLOCK(surface))
@@ -94,7 +106,6 @@ int main(int argc, char const *argv[])
             SDL_UnlockSurface(surface);
         }
         SDL_UpdateWindowSurface(window);
-
     }
 
     SDL_DestroyWindow(window);
