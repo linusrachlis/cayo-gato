@@ -61,7 +61,7 @@ void game_update_and_render(
             pixel_column < display.width;
             pixel_column++)
         {
-            u32 *pixel = display.pixels + pixel_row * pixel_column;
+            u32 *pixel = display.pixels + (pixel_row * display.width) + pixel_column;
 
             int tile_x = pixel_column / PIXELS_PER_TILE;
 
