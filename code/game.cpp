@@ -2,9 +2,9 @@
 
 #include "game.h"
 
-#define PIXELS_PER_TILE 20;
+#define TILE_SIZE 20;
 
-GameColor tile_color = {0xFF, 0x88, 0};
+GameColor tile_color = {0xAA, 0x66, 0x33};
 GameColor cat_color = {0, 0, 0};
 GameColor bg_color = {0, 0, 0};
 
@@ -54,7 +54,7 @@ void game_update_and_render(
         pixel_row < display.height;
         pixel_row++)
     {
-        int tile_y = pixel_row / PIXELS_PER_TILE;
+        int tile_y = pixel_row / TILE_SIZE;
 
         for (
             int pixel_column = 0;
@@ -63,10 +63,10 @@ void game_update_and_render(
         {
             u32 *pixel = display.pixels + (pixel_row * display.width) + pixel_column;
 
-            int tile_x = pixel_column / PIXELS_PER_TILE;
+            int tile_x = pixel_column / TILE_SIZE;
 
-            int column_pixel_in_tile = pixel_column % PIXELS_PER_TILE;
-            int row_pixel_in_tile = pixel_row % PIXELS_PER_TILE;
+            int column_pixel_in_tile = pixel_column % TILE_SIZE;
+            int row_pixel_in_tile = pixel_row % TILE_SIZE;
 
             bool tile_pixel = (column_pixel_in_tile > 0) &&
                               (row_pixel_in_tile > 0);
