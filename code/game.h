@@ -1,5 +1,8 @@
 #include "types.h"
 
+#define TILE_MAP_WIDTH 10
+#define TILE_MAP_HEIGHT 10
+
 struct GameDisplay
 {
     u32 *pixels;
@@ -16,6 +19,7 @@ struct GameState
     struct {
         int x, y;
     } cat_pos;
+    bool tile_map[TILE_MAP_HEIGHT][TILE_MAP_WIDTH];
 };
 
 struct GameColor

@@ -13,6 +13,19 @@ GameState *game_init_state()
     GameState *state = (GameState *)malloc(sizeof(GameState));
     state->cat_pos.x = 0;
     state->cat_pos.y = 0;
+    bool tile_map[TILE_MAP_HEIGHT][TILE_MAP_WIDTH] = {
+        {0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
+        {0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 1, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 1, 1, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    };
+    memcpy(state->tile_map, tile_map, TILE_MAP_HEIGHT * TILE_MAP_WIDTH);
     return state;
 }
 
@@ -65,6 +78,9 @@ void game_update_and_render(
 
             int tile_x = pixel_column / TILE_SIZE;
 
+            bool is_tile = (tile_y < TILE_MAP_HEIGHT) && (tile_x < TILE_MAP_WIDTH) &&
+                           state->tile_map[tile_y][tile_x];
+
             int column_pixel_in_tile = pixel_column % TILE_SIZE;
             int row_pixel_in_tile = pixel_row % TILE_SIZE;
 
@@ -83,7 +99,7 @@ void game_update_and_render(
             {
                 *pixel = game_render_color(cat_color);
             }
-            else if (tile_pixel)
+            else if (is_tile && tile_pixel)
             {
                 *pixel = game_render_color(tile_color);
             }

@@ -7,4 +7,4 @@
 
 ## game
 
-* basically everything
+* only allow moving to an adjacent tile if there is a tile there
