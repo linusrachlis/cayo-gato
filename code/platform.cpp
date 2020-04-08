@@ -41,6 +41,11 @@ int main(int argc, char const *argv[])
     bool running = true;
     while (running)
     {
+        // Reset one-press-at-a-time inputs
+        game_input.down  = false;
+        game_input.up    = false;
+        game_input.left  = false;
+        game_input.right = false;
 
         while (SDL_PollEvent(&event))
         {
@@ -70,22 +75,7 @@ int main(int argc, char const *argv[])
             case SDL_KEYUP:
                 if (!event.key.repeat)
                 {
-                    if (event.key.keysym.sym == SDLK_DOWN)
-                    {
-                        game_input.down = false;
-                    }
-                    else if (event.key.keysym.sym == SDLK_UP)
-                    {
-                        game_input.up = false;
-                    }
-                    else if (event.key.keysym.sym == SDLK_LEFT)
-                    {
-                        game_input.left = false;
-                    }
-                    else if (event.key.keysym.sym == SDLK_RIGHT)
-                    {
-                        game_input.right = false;
-                    }
+                    // ... probably need this for something ...
                 }
                 break;
             case SDL_QUIT:
