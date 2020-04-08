@@ -68,7 +68,7 @@ void game_update_and_render(
             int column_pixel_in_tile = pixel_column % PIXELS_PER_TILE;
             int row_pixel_in_tile = pixel_row % PIXELS_PER_TILE;
 
-            bool tile_pixel = (column_pixel_in_tile > 0) ||
+            bool tile_pixel = (column_pixel_in_tile > 0) &&
                               (row_pixel_in_tile > 0);
 
             bool cat_tile = (tile_y == state->cat_pos.y) &&
