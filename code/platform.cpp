@@ -30,9 +30,6 @@ int main(int argc, char const *argv[])
     GameState *game_state = game_init_state();
 
     GameDisplay game_display = {};
-    // TODO: we're just using the default pixel color format, better to
-    // use what's best for us in the game layer and explicitly convert from
-    // that here.
     game_display.pixels = (u32 *)surface->pixels;
     game_display.width = window_width;
     game_display.height = window_height;
