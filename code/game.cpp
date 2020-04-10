@@ -84,6 +84,11 @@ void game_update_and_render(
     // ...
 
     // SECTION: Render
+
+    u32 rendered_cat_color = game_render_color(cat_color);
+    u32 rendered_tile_color = game_render_color(tile_color);
+    u32 rendered_bg_color = game_render_color(bg_color);
+
     for (
         int pixel_row = 0;
         pixel_row < display.height;
@@ -103,32 +108,38 @@ void game_update_and_render(
             bool is_tile = (tile_y < TILE_MAP_HEIGHT) && (tile_x < TILE_MAP_WIDTH) &&
                            state->tile_map[tile_y][tile_x];
 
-            int column_pixel_in_tile = pixel_column % TILE_SIZE;
-            int row_pixel_in_tile = pixel_row % TILE_SIZE;
-
-            bool tile_pixel = (column_pixel_in_tile > 0) &&
-                              (row_pixel_in_tile > 0);
-
-            bool cat_tile = (tile_y == state->cat_pos.y) &&
-                            (tile_x == state->cat_pos.x);
-
-            bool cat_pixel = (8 <= column_pixel_in_tile) &&
-                             (column_pixel_in_tile < 12) &&
-                             (8 <= row_pixel_in_tile) &&
-                             (row_pixel_in_tile < 12);
-
-            if (cat_tile && cat_pixel)
+            if (is_tile)
             {
-                *pixel = game_render_color(cat_color);
+                bool cat_tile = (tile_y == state->cat_pos.y) &&
+                                (tile_x == state->cat_pos.x);
+
+                int column_pixel_in_tile = pixel_column % TILE_SIZE;
+                int row_pixel_in_tile = pixel_row % TILE_SIZE;
+
+                if (cat_tile)
+                {
+
+                    bool cat_pixel = (8 <= column_pixel_in_tile) &&
+                                     (column_pixel_in_tile < 12) &&
+                                     (8 <= row_pixel_in_tile) &&
+                                     (row_pixel_in_tile < 12);
+                    if (cat_pixel)
+                    {
+                        *pixel = rendered_cat_color;
+                        continue;
+                    }
+                }
+
+                bool tile_pixel = (column_pixel_in_tile > 0) &&
+                                  (row_pixel_in_tile > 0);
+                if (tile_pixel)
+                {
+                    *pixel = rendered_tile_color;
+                    continue;
+                }
             }
-            else if (is_tile && tile_pixel)
-            {
-                *pixel = game_render_color(tile_color);
-            }
-            else
-            {
-                *pixel = game_render_color(bg_color);
-            }
+
+            *pixel = rendered_bg_color;
         }
     }
 }
