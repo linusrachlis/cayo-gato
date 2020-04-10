@@ -3,6 +3,8 @@
 #include "types.h"
 #include "game.cpp"
 
+#define TARGET_SECONDS_PER_FRAME 0.016666667
+
 int window_width = 1440;
 int window_height = 900;
 
@@ -36,12 +38,17 @@ int main(int argc, char const *argv[])
 
     GameInput game_input = {};
     bool running = true;
+
+    u64 perf_freq = SDL_GetPerformanceFrequency();
+    u64 perf_count_start = SDL_GetPerformanceCounter();
+    u64 perf_count_end;
+
     while (running)
     {
         // Reset one-press-at-a-time inputs
-        game_input.down  = false;
-        game_input.up    = false;
-        game_input.left  = false;
+        game_input.down = false;
+        game_input.up = false;
+        game_input.left = false;
         game_input.right = false;
 
         while (SDL_PollEvent(&event))
@@ -93,6 +100,25 @@ int main(int argc, char const *argv[])
             SDL_UnlockSurface(surface);
         }
         SDL_UpdateWindowSurface(window);
+
+        u64 perf_count_end = SDL_GetPerformanceCounter();
+        float seconds_elapsed_1 = (perf_count_end - perf_count_start) / (float)perf_freq;
+
+        float seconds_to_wait = TARGET_SECONDS_PER_FRAME - seconds_elapsed_1;
+        if (seconds_to_wait > 0)
+        {
+            u32 ms_to_wait = (u32)(seconds_to_wait * 1000);
+            SDL_Delay(ms_to_wait);
+        }
+
+        perf_count_end = SDL_GetPerformanceCounter();
+        float seconds_elapsed_2 = (perf_count_end - perf_count_start) / (float)perf_freq;
+        printf(
+            "framerate: (potential %.2f, actual %.2f)\n",
+            1.0 / seconds_elapsed_1,
+            1.0 / seconds_elapsed_2);
+
+        perf_count_start = perf_count_end;
     }
 
     SDL_DestroyWindow(window);
