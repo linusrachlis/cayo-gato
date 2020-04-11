@@ -201,6 +201,10 @@ void game_update_and_render(
                 *pixel = rendered_tile_color;
                 goto next_pixel;
             }
+            else
+            {
+                *pixel = rendered_bg_color;
+            }
 
         next_pixel:
             continue;
