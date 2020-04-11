@@ -5,8 +5,8 @@
 
 #define TARGET_SECONDS_PER_FRAME 0.016666667
 
-int window_width = 1440;
-int window_height = 900;
+int window_width = 800;
+int window_height = 600;
 
 int main(int argc, char const *argv[])
 {
