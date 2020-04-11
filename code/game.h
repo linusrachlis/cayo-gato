@@ -1,7 +1,7 @@
-#include "types.h"
-
-#define TILE_MAP_WIDTH 10
-#define TILE_MAP_HEIGHT 10
+struct TileCoord
+{
+    int x, y;
+};
 
 struct GameDisplay
 {
@@ -14,11 +14,17 @@ struct GameInput
     bool up, right, down, left;
 };
 
+struct Food
+{
+    TileCoord pos;
+    bool exists;
+};
+
 struct GameState
 {
-    struct {
-        int x, y;
-    } cat_pos;
+    TileCoord cat_pos;
+    Food food[8];
+    size_t num_food;
     bool tile_map[TILE_MAP_HEIGHT][TILE_MAP_WIDTH];
 };
 
