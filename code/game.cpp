@@ -1,6 +1,8 @@
+#include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
-#define TILE_SIZE 20;
+#define TILE_SIZE 40
 #define TILE_MAP_WIDTH 10
 #define TILE_MAP_HEIGHT 10
 
@@ -33,10 +35,15 @@ Food make_food(int x, int y)
 GameState *game_init_state()
 {
     GameState *state = (GameState *)malloc(sizeof(GameState));
+
+    state->time = 0;
+    state->delta_time = 0;
     state->cat_pos = (TileCoord){4, 0};
+
     state->food[0] = make_food(7, 8);
     state->food[1] = make_food(3, 2);
     state->num_food = 2;
+
     bool tile_map[TILE_MAP_HEIGHT][TILE_MAP_WIDTH] = {
         {0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, // 0
         {0, 0, 0, 1, 1, 1, 0, 0, 0, 0}, // 1
@@ -50,6 +57,7 @@ GameState *game_init_state()
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 9
     };
     memcpy(state->tile_map, tile_map, TILE_MAP_HEIGHT * TILE_MAP_WIDTH);
+
     return state;
 }
 
@@ -75,12 +83,41 @@ void cat_move(GameState *state, int move_x, int move_y)
     state->cat_pos.y = new_y;
 }
 
+u32 water_pixel(int x, int y, f64 time)
+{
+    static u32 bg_color = 0x00112299;
+    static u32 wave_color = 0x006677EE;
+    static int move_range = 33;
+
+    f64 sin_time_y = sin(time + y);
+    f64 sin_y = sin((f64)y);
+    f64 sin_unit = (sin_time_y + sin_y) / 2.0;
+    int offset_x = (int)(sin_unit * move_range) + x;
+    bool wave = ((y % 33) == 0) &&
+                (
+                    (
+                        (offset_x + y)
+                        % 72
+                    )
+                < 27);
+    if (wave)
+    {
+        return wave_color;
+    }
+    else
+    {
+        return bg_color;
+    }
+}
+
 void game_update_and_render(
     GameState *state,
     GameInput input,
     GameDisplay display)
 {
-    // SECTION: Process input
+    // SECTION: Simulate
+
+    // Move cat based on input
     if (input.down)
     {
         cat_move(state, 0, 1);
@@ -98,8 +135,7 @@ void game_update_and_render(
         cat_move(state, -1, 0);
     }
 
-    // SECTION: Simulate
-
+    // Take food if you're on the same tile
     for (
         size_t food_index = 0;
         food_index < state->num_food;
@@ -114,7 +150,6 @@ void game_update_and_render(
         if (food_pos.x == state->cat_pos.x &&
             food_pos.y == state->cat_pos.y)
         {
-            // Take the food
             state->food[food_index].exists = false;
         }
     }
@@ -146,7 +181,7 @@ void game_update_and_render(
 
             if (!is_tile)
             {
-                *pixel = rendered_bg_color;
+                *pixel = water_pixel(pixel_column, pixel_row, state->time);
                 goto next_pixel;
             }
 
@@ -203,7 +238,7 @@ void game_update_and_render(
             }
             else
             {
-                *pixel = rendered_bg_color;
+                *pixel = water_pixel(pixel_column, pixel_row, state->time);
             }
 
         next_pixel:

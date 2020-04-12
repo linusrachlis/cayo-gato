@@ -22,6 +22,8 @@ struct Food
 
 struct GameState
 {
+    f64 time;
+    f64 delta_time;
     TileCoord cat_pos;
     Food food[8];
     size_t num_food;

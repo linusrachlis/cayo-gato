@@ -41,7 +41,10 @@ int main(int argc, char const *argv[])
 
     u64 perf_freq = SDL_GetPerformanceFrequency();
     u64 perf_count_start = SDL_GetPerformanceCounter();
-    u64 perf_count_end;
+    u64 perf_count_end_frame;
+
+    // TODO Or should be TARGET_SECONDS_PER_FRAME?
+    float frame_seconds = 0;
 
     while (running)
     {
@@ -93,6 +96,9 @@ int main(int argc, char const *argv[])
             SDL_LockSurface(surface);
         }
 
+        game_state->delta_time = frame_seconds;
+        game_state->time += frame_seconds;
+
         game_update_and_render(game_state, game_input, game_display);
 
         if (SDL_MUSTLOCK(surface))
@@ -101,24 +107,24 @@ int main(int argc, char const *argv[])
         }
         SDL_UpdateWindowSurface(window);
 
-        u64 perf_count_end = SDL_GetPerformanceCounter();
-        float seconds_elapsed_1 = (perf_count_end - perf_count_start) / (float)perf_freq;
+        u64 perf_count_end_render = SDL_GetPerformanceCounter();
+        float render_seconds = (perf_count_end_render - perf_count_start) / (float)perf_freq;
 
-        float seconds_to_wait = TARGET_SECONDS_PER_FRAME - seconds_elapsed_1;
+        float seconds_to_wait = TARGET_SECONDS_PER_FRAME - render_seconds;
         if (seconds_to_wait > 0)
         {
             u32 ms_to_wait = (u32)(seconds_to_wait * 1000);
             SDL_Delay(ms_to_wait);
         }
 
-        perf_count_end = SDL_GetPerformanceCounter();
-        float seconds_elapsed_2 = (perf_count_end - perf_count_start) / (float)perf_freq;
+        perf_count_end_frame = SDL_GetPerformanceCounter();
+        frame_seconds = (perf_count_end_frame - perf_count_start) / (float)perf_freq;
         printf(
             "framerate: (potential %.2f, actual %.2f)\n",
-            1.0 / seconds_elapsed_1,
-            1.0 / seconds_elapsed_2);
+            1.0 / render_seconds,
+            1.0 / frame_seconds);
 
-        perf_count_start = perf_count_end;
+        perf_count_start = perf_count_end_frame;
     }
 
     SDL_DestroyWindow(window);
