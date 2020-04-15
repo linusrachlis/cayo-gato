@@ -8,7 +8,17 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "prod build",
+            "type": "shell",
+            "command": "gcc code/platform.cpp -o build/cayo-gato-prod `sdl2-config --libs --cflags`",
+            "group": "build",
+            "problemMatcher": []
         }
     ]
 }

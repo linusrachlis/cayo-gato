@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "gcc - dev build",
+            "name": "dev build & run",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/cayo-gato",

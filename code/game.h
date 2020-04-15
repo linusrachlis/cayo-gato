@@ -25,6 +25,9 @@ struct GameState
     f64 time;
     f64 delta_time;
     TileCoord cat_pos;
+    int cat_life;
+    bool won;
+    TileCoord goal_pos;
     Food food[8];
     size_t num_food;
     bool tile_map[TILE_MAP_HEIGHT][TILE_MAP_WIDTH];
