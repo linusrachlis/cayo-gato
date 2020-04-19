@@ -4,7 +4,7 @@
         {
             "label": "dev build",
             "type": "shell",
-            "command": "gcc -g code/platform.cpp -o build/cayo-gato `sdl2-config --libs --cflags`",
+            "command": "g++ -g code/platform.cpp -o build/cayo-gato `sdl2-config --libs --cflags`",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -16,7 +16,7 @@
         {
             "label": "prod build",
             "type": "shell",
-            "command": "gcc code/platform.cpp -o build/cayo-gato-prod `sdl2-config --libs --cflags`",
+            "command": "g++ code/platform.cpp -o build/cayo-gato-prod `sdl2-config --libs --cflags`",
             "group": "build",
             "problemMatcher": []
         }

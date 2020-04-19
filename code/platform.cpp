@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <SDL.h>
-#include "types.h"
+#include "platform.h"
 #include "game.cpp"
 
 #define TARGET_SECONDS_PER_FRAME 0.016666667
