@@ -1,3 +1,5 @@
+#include <math.h>
+
 // TODO will time overflow in any realistic amount of run time?
 //  would it matter?
 u32 water_pixel(GameState *state, int x, int y, f64 time)

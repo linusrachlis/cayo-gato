@@ -39,8 +39,8 @@ struct Food : Entity
 
 struct GameState
 {
-    f64 time;
-    f64 delta_time;
+    float time;
+    float delta_time;
     Cat *cat;
     Entity *goal;
     bool won;

@@ -113,7 +113,7 @@ int main(int argc, char const *argv[])
         float seconds_to_wait = TARGET_SECONDS_PER_FRAME - render_seconds;
         if (seconds_to_wait > 0)
         {
-            u32 ms_to_wait = (u32)(seconds_to_wait * 1000);
+            int ms_to_wait = (int)(seconds_to_wait * 1000);
             SDL_Delay(ms_to_wait);
         }
 
